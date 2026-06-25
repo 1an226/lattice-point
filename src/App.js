@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
+// eslint-disable-next-line
 const COLORS = {
   bg: "#0A0A0F",
   navy: "#1A1A2E",
