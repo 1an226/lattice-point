@@ -142,7 +142,7 @@ function AfricaMap() {
   );
 }
 
-// ===== UPDATED NAVBAR WITH HAMBURGER =====
+// ===== NAVBAR WITH HAMBURGER =====
 function NavBar({ onOpenLogistics }) {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -289,7 +289,7 @@ function NavBar({ onOpenLogistics }) {
   );
 }
 
-// ===== UPDATED HERO — CURSOR DISAPPEARS =====
+// ===== HERO — CURSOR DISAPPEARS =====
 function Hero() {
   const [typed, setTyped] = useState("");
   const [done, setDone] = useState(false);
@@ -548,6 +548,7 @@ function Clients() {
   );
 }
 
+// ===== UPDATED CONTACT — WITH WHATSAPP BUTTON =====
 function Contact() {
   const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", message: "" });
   const [sent, setSent] = useState(false);
@@ -562,6 +563,10 @@ function Contact() {
     boxSizing: "border-box", transition: "border-color 0.2s",
   };
 
+  // WhatsApp number (international format, no + sign)
+  const whatsappNumber = "254141763639";
+  const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hello%20I%27d%20like%20to%20know%20more%20about%20your%20services.`;
+
   return (
     <section id="contact" style={{ background: "#0A0A0F", padding: "100px 5vw", borderTop: "1px solid #2A2A3A" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
@@ -571,6 +576,8 @@ function Contact() {
             <h2 style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 800, color: "#FFFFFF", margin: "0 0 32px", lineHeight: 1.15 }}>
               Let's activate<br /><span style={{ color: "#FF6B00" }}>your brand.</span>
             </h2>
+
+            {/* Existing contact info */}
             {[
               { label: "Phone", value: "+254 722 218 633" },
               { label: "Phone", value: "+254 702 966 021" },
@@ -584,7 +591,42 @@ function Contact() {
                 <span style={{ fontFamily: "Inter, sans-serif", fontSize: 13, color: "#8A8A9A", lineHeight: 1.5 }}>{item.value}</span>
               </div>
             ))}
+
+            {/* WhatsApp Button */}
+            <div style={{ marginTop: 24, borderTop: "1px solid #2A2A3A", paddingTop: 24 }}>
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 10,
+                  background: "#25D366",
+                  color: "#FFFFFF",
+                  padding: "10px 20px",
+                  borderRadius: 8,
+                  textDecoration: "none",
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: 13,
+                  fontWeight: 700,
+                  transition: "all 0.2s",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={e => { e.target.style.background = "#1DA851"; }}
+                onMouseLeave={e => { e.target.style.background = "#25D366"; }}
+              >
+                <span style={{ fontSize: 18 }}>💬</span>
+                Chat on WhatsApp
+              </a>
+              <div style={{ fontSize: 11, color: "#8A8A9A", marginTop: 8 }}>
+                Click to start a conversation on WhatsApp
+              </div>
+            </div>
           </div>
+
+          {/* Contact form (unchanged) */}
           <div style={{ flex: "1 1 340px" }}>
             {sent ? (
               <div style={{ background: "#FF6B0015", border: "1px solid #FF6B0040", borderRadius: 12, padding: 40, textAlign: "center" }}>
