@@ -142,8 +142,10 @@ function AfricaMap() {
   );
 }
 
+// ===== UPDATED NAVBAR WITH HAMBURGER =====
 function NavBar({ onOpenLogistics }) {
   const [scrolled, setScrolled] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
@@ -175,7 +177,9 @@ function NavBar({ onOpenLogistics }) {
           LATTICE POINT
         </span>
       </div>
-      <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
+
+      {/* Desktop Menu */}
+      <div className="desktop-menu" style={{ display: "flex", gap: 20, alignItems: "center" }}>
         {links.map(l => (
           <a key={l} href={`#${l.toLowerCase()}`} style={{
             color: "#8A8A9A", textDecoration: "none",
@@ -202,12 +206,93 @@ function NavBar({ onOpenLogistics }) {
           textDecoration: "none", letterSpacing: 0.5, textTransform: "uppercase",
         }}>Get In Touch</a>
       </div>
+
+      {/* Hamburger (mobile) */}
+      <div className="hamburger" onClick={() => setIsOpen(!isOpen)} style={{
+        display: "none",
+        flexDirection: "column",
+        gap: "5px",
+        cursor: "pointer",
+        padding: "4px",
+      }}>
+        <span style={{ width: "24px", height: "2px", background: "#FFFFFF", borderRadius: "2px" }} />
+        <span style={{ width: "24px", height: "2px", background: "#FFFFFF", borderRadius: "2px" }} />
+        <span style={{ width: "24px", height: "2px", background: "#FFFFFF", borderRadius: "2px" }} />
+      </div>
+
+      {/* Dropdown (mobile) */}
+      {isOpen && (
+        <div style={{
+          position: "absolute",
+          top: 64,
+          left: 0,
+          right: 0,
+          background: "#0A0A0F",
+          borderBottom: "1px solid #2A2A3A",
+          padding: "20px 5vw",
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+          boxShadow: "0 20px 40px rgba(0,0,0,0.8)",
+        }}>
+          {links.map(l => (
+            <a key={l} href={`#${l.toLowerCase()}`} style={{
+              color: "#FFFFFF",
+              textDecoration: "none",
+              fontFamily: "Inter, sans-serif",
+              fontSize: 16,
+              fontWeight: 500,
+              padding: "8px 0",
+              borderBottom: "1px solid #1A1A2E",
+            }} onClick={() => setIsOpen(false)}>{l}</a>
+          ))}
+          <button onClick={() => { onOpenLogistics(); setIsOpen(false); }} style={{
+            background: "transparent",
+            border: "1px solid #FF6B00",
+            color: "#FF6B00",
+            padding: "12px 16px",
+            borderRadius: 6,
+            fontFamily: "Inter, sans-serif",
+            fontSize: 14,
+            fontWeight: 600,
+            cursor: "pointer",
+            textTransform: "uppercase",
+            letterSpacing: 0.5,
+            marginTop: 8,
+          }}>Logistics Portal</button>
+          <a href="#contact" onClick={() => setIsOpen(false)} style={{
+            background: "#FF6B00",
+            color: "#FFFFFF",
+            padding: "12px 20px",
+            borderRadius: 6,
+            fontFamily: "Inter, sans-serif",
+            fontSize: 14,
+            fontWeight: 600,
+            textDecoration: "none",
+            textAlign: "center",
+            textTransform: "uppercase",
+            letterSpacing: 0.5,
+          }}>Get In Touch</a>
+        </div>
+      )}
+
+      <style>{`
+        @media (max-width: 900px) {
+          .desktop-menu { display: none !important; }
+          .hamburger { display: flex !important; }
+        }
+        @media (min-width: 901px) {
+          .hamburger { display: none !important; }
+        }
+      `}</style>
     </nav>
   );
 }
 
+// ===== UPDATED HERO — CURSOR DISAPPEARS =====
 function Hero() {
   const [typed, setTyped] = useState("");
+  const [done, setDone] = useState(false);
   const full = "Win at the point of purchase.";
 
   useEffect(() => {
@@ -215,7 +300,10 @@ function Hero() {
     const t = setInterval(() => {
       setTyped(full.slice(0, i));
       i++;
-      if (i > full.length) clearInterval(t);
+      if (i > full.length) {
+        clearInterval(t);
+        setDone(true);
+      }
     }, 60);
     return () => clearInterval(t);
   }, []);
@@ -261,7 +349,7 @@ function Hero() {
             lineHeight: 1.1, margin: "0 0 24px",
           }}>
             {typed}
-            <span style={{ color: "#FF6B00", animation: "blink 1s infinite" }}>|</span>
+            {!done && <span style={{ color: "#FF6B00", animation: "blink 1s infinite" }}>|</span>}
           </h1>
           <p style={{
             fontFamily: "Inter, sans-serif", fontSize: 16,

@@ -218,19 +218,18 @@ export default function LogisticsPanel({ onClose }) {
               {/* KPI CARDS */}
               <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 24 }}>
                 {[
-                  { label: "Total Shipments", value: shipments.length, color: COLORS.cyan, icon: "📦" },
-                  { label: "Delivered", value: delivered, color: COLORS.green, icon: "✅" },
-                  { label: "In Transit", value: inTransit, color: COLORS.yellow, icon: "🚛" },
-                  { label: "Delayed", value: delayed, color: COLORS.red, icon: "⚠️" },
-                  { label: "Stores Covered", value: NAIVAS_STORES.length, color: COLORS.orange, icon: "🏪" },
-                  { label: "Invoice Value", value: `KES ${(totalValue / 1000).toFixed(0)}K`, color: COLORS.purple, icon: "💰" },
+                  { label: "Total Shipments", value: shipments.length, color: COLORS.cyan },
+                  { label: "Delivered", value: delivered, color: COLORS.green },
+                  { label: "In Transit", value: inTransit, color: COLORS.yellow },
+                  { label: "Delayed", value: delayed, color: COLORS.red },
+                  { label: "Stores Covered", value: NAIVAS_STORES.length, color: COLORS.orange },
+                  { label: "Invoice Value", value: `KES ${(totalValue / 1000).toFixed(0)}K`, color: COLORS.purple },
                 ].map(kpi => (
                   <div key={kpi.label} style={{
                     background: COLORS.card, border: `1px solid ${COLORS.border}`,
                     borderRadius: 12, padding: "16px",
                     borderTop: `3px solid ${kpi.color}`,
                   }}>
-                    <div style={{ fontSize: 20, marginBottom: 8 }}>{kpi.icon}</div>
                     <div style={{ fontSize: 22, fontWeight: 800, color: kpi.color }}>{kpi.value}</div>
                     <div style={{ fontSize: 11, color: COLORS.grey, marginTop: 4 }}>{kpi.label}</div>
                   </div>
@@ -548,12 +547,12 @@ export default function LogisticsPanel({ onClose }) {
                         flex: 1, background: COLORS.orange, color: COLORS.white,
                         border: "none", borderRadius: 6, padding: "8px",
                         fontSize: 11, fontWeight: 700, cursor: "pointer",
-                      }}>📞 Call Driver</button>
+                      }}>Call Driver</button>
                       <button style={{
                         flex: 1, background: "transparent", color: COLORS.cyan,
                         border: `1px solid ${COLORS.cyan}40`, borderRadius: 6, padding: "8px",
                         fontSize: 11, fontWeight: 700, cursor: "pointer",
-                      }}>📄 View Invoice</button>
+                      }}>View Invoice</button>
                     </div>
                   </div>
                 )}
