@@ -15,7 +15,6 @@ const COLORS = {
   purple: "#9B59B6",
 };
 
-const BIO_HQ = {
   name: "Bio Foods HQ",
   address: "Off Road C, Industrial Area, Nairobi",
   lat: -1.3127,
