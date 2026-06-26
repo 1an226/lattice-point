@@ -564,7 +564,7 @@ function Contact() {
   };
 
   // WhatsApp number (international format, no + sign)
-  const whatsappNumber = "254141763639";
+  const whatsappNumber = "254723939102";
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hello%20I%27d%20like%20to%20know%20more%20about%20your%20services.`;
 
   return (
