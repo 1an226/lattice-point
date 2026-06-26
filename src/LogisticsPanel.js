@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import axios from "axios";   // <-- added for M‑Pesa
 
 const COLORS = {
   bg: "#0A0A0F",
@@ -107,6 +108,12 @@ export default function LogisticsPanel({ onClose }) {
   const [filterStatus, setFilterStatus] = useState("All");
   const intervalRef = useRef(null);
 
+  // --- M-Pesa payment states ---
+  const [paymentPhone, setPaymentPhone] = useState('');
+  const [paymentAmount, setPaymentAmount] = useState('');
+  const [paymentStatus, setPaymentStatus] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+
   useEffect(() => {
     const tick = setInterval(() => setTime(new Date()), 1000);
     intervalRef.current = setInterval(() => {
@@ -118,6 +125,31 @@ export default function LogisticsPanel({ onClose }) {
     }, 3000);
     return () => { clearInterval(tick); clearInterval(intervalRef.current); };
   }, []);
+
+  // --- Payment handler ---
+  const handlePayment = async (e) => {
+    e.preventDefault();
+    setIsProcessing(true);
+    setPaymentStatus('Initiating payment...');
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/stk-push', {
+        phoneNumber: paymentPhone,
+        amount: parseFloat(paymentAmount)
+      });
+
+      if (response.data.success) {
+        setPaymentStatus(`✅ STK Push sent! Check your phone (${paymentPhone}) and enter your M-Pesa PIN to complete the payment.`);
+      } else {
+        setPaymentStatus(`❌ Error: ${response.data.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      setPaymentStatus('❌ Payment request failed. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const delivered = shipments.filter(s => s.status === "Delivered").length;
   const inTransit = shipments.filter(s => s.status === "In Transit").length;
@@ -373,10 +405,90 @@ export default function LogisticsPanel({ onClose }) {
                   </div>
                 </div>
               </div>
+
+              {/* === M‑PESA PAYMENT FORM (new) === */}
+              <div style={{
+                background: COLORS.card,
+                border: `1px solid ${COLORS.border}`,
+                borderRadius: 12,
+                padding: 24,
+                marginTop: 24,
+                maxWidth: 480,
+              }}>
+                <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.white, marginBottom: 12 }}>
+                  💳 Pay for Logistics (M-Pesa)
+                </div>
+                <form onSubmit={handlePayment} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <input
+                    type="tel"
+                    placeholder="Phone Number (e.g., 254712345678)"
+                    value={paymentPhone}
+                    onChange={(e) => setPaymentPhone(e.target.value)}
+                    required
+                    style={{
+                      background: COLORS.navy,
+                      border: `1px solid ${COLORS.border}`,
+                      borderRadius: 8,
+                      padding: '12px 16px',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 13,
+                      color: COLORS.white,
+                      outline: 'none',
+                    }}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Amount (KES)"
+                    value={paymentAmount}
+                    onChange={(e) => setPaymentAmount(e.target.value)}
+                    required
+                    min="1"
+                    style={{
+                      background: COLORS.navy,
+                      border: `1px solid ${COLORS.border}`,
+                      borderRadius: 8,
+                      padding: '12px 16px',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 13,
+                      color: COLORS.white,
+                      outline: 'none',
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={isProcessing}
+                    style={{
+                      background: COLORS.orange,
+                      color: COLORS.white,
+                      border: 'none',
+                      borderRadius: 8,
+                      padding: '14px 24px',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: 14,
+                      fontWeight: 700,
+                      cursor: isProcessing ? 'not-allowed' : 'pointer',
+                      opacity: isProcessing ? 0.6 : 1,
+                      transition: 'opacity 0.2s',
+                    }}
+                  >
+                    {isProcessing ? 'Processing...' : 'Pay Now'}
+                  </button>
+                  {paymentStatus && (
+                    <div style={{
+                      fontSize: 12,
+                      color: paymentStatus.includes('✅') ? COLORS.green : paymentStatus.includes('❌') ? COLORS.red : COLORS.grey,
+                      marginTop: 8,
+                    }}>
+                      {paymentStatus}
+                    </div>
+                  )}
+                </form>
+              </div>
+              {/* ================================== */}
             </div>
           )}
 
-          {/* SHIPMENTS TAB */}
+          {/* SHIPMENTS TAB (unchanged) */}
           {activeTab === "shipments" && (
             <div>
               <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center", flexWrap: "wrap" }}>
@@ -563,7 +675,7 @@ export default function LogisticsPanel({ onClose }) {
             </div>
           )}
 
-          {/* FLEET TAB */}
+          {/* FLEET TAB (unchanged) */}
           {activeTab === "fleet" && (
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.white, marginBottom: 16 }}>
@@ -631,7 +743,7 @@ export default function LogisticsPanel({ onClose }) {
             </div>
           )}
 
-          {/* ROUTES TAB */}
+          {/* ROUTES TAB (unchanged) */}
           {activeTab === "routes" && (
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.white, marginBottom: 16 }}>
@@ -724,7 +836,7 @@ export default function LogisticsPanel({ onClose }) {
             </div>
           )}
 
-          {/* ALERTS TAB */}
+          {/* ALERTS TAB (unchanged) */}
           {activeTab === "alerts" && (
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.white, marginBottom: 16 }}>
@@ -796,7 +908,7 @@ export default function LogisticsPanel({ onClose }) {
             </div>
           )}
 
-          {/* REPORTS TAB */}
+          {/* REPORTS TAB (unchanged) */}
           {activeTab === "reports" && (
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.white, marginBottom: 16 }}>
