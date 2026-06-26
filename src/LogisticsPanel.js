@@ -15,6 +15,8 @@ const COLORS = {
   purple: "#9B59B6",
 };
 
+// eslint-disable-next-line no-unused-vars
+const BIO_HQ = {
   name: "Bio Foods HQ",
   address: "Off Road C, Industrial Area, Nairobi",
   lat: -1.3127,
