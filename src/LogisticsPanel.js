@@ -7,12 +7,11 @@ const COLORS = {
   border: "#2A2A3A",
   orange: "#FF6B00",
   cyan: "#00D4FF",
-  green: "#00FF88",
-  red: "#FF3B3B",
-  yellow: "#FFD600",
+  green: "#00C853",
+  red: "#FF5252",
+  yellow: "#FFC107",
   white: "#FFFFFF",
   grey: "#8A8A9A",
-  purple: "#9B59B6",
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -55,11 +54,11 @@ const TRUCKS = [
 
 const STATUSES = ["Departed", "In Transit", "Delivered", "Delayed", "Loading"];
 const STATUS_COLORS = {
-  "Departed": "#00D4FF",
-  "In Transit": "#FFD600",
-  "Delivered": "#00FF88",
-  "Delayed": "#FF3B3B",
-  "Loading": "#9B59B6",
+  "Departed": COLORS.cyan,
+  "In Transit": COLORS.orange,
+  "Delivered": COLORS.green,
+  "Delayed": COLORS.red,
+  "Loading": COLORS.grey,
 };
 
 const PRODUCTS = [
@@ -135,7 +134,7 @@ export default function LogisticsPanel({ onClose }) {
   };
 
   return (
-    <div style={{
+    <div className="logistics-panel" style={{
       position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)",
       zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center",
       fontFamily: "Inter, sans-serif",
@@ -153,8 +152,9 @@ export default function LogisticsPanel({ onClose }) {
           background: COLORS.navy, borderBottom: `1px solid ${COLORS.border}`,
           padding: "12px 24px", display: "flex",
           alignItems: "center", justifyContent: "space-between",
+          flexWrap: "wrap", gap: 8,
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
             <div style={{
               background: COLORS.orange, borderRadius: 8,
               padding: "6px 12px", fontWeight: 700,
@@ -162,14 +162,14 @@ export default function LogisticsPanel({ onClose }) {
             }}>LPA LOGISTICS</div>
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.white }}>
-                Bio Foods Distribution — Nairobi Operations
+                Bio Foods Distribution — Nairobi
               </div>
               <div style={{ fontSize: 11, color: COLORS.grey }}>
-                Origin: Bio Foods HQ, Industrial Area · {NAIVAS_STORES.length} Naivas Stores · {TRUCKS.length} Active Trucks
+                {NAIVAS_STORES.length} Naivas Stores · {TRUCKS.length} Active Trucks
               </div>
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
             <div style={{ textAlign: "right" }}>
               <div style={{ fontSize: 18, fontWeight: 700, color: COLORS.cyan, fontFamily: "monospace" }}>
                 {time.toLocaleTimeString()}
@@ -195,7 +195,7 @@ export default function LogisticsPanel({ onClose }) {
         {/* TABS */}
         <div style={{
           background: COLORS.navy, borderBottom: `1px solid ${COLORS.border}`,
-          padding: "0 24px", display: "flex", gap: 4,
+          padding: "0 24px", display: "flex", gap: 4, overflowX: "auto",
         }}>
           {["dashboard", "shipments", "fleet", "routes", "alerts", "reports"].map(tab => (
             <button key={tab} onClick={() => setActiveTab(tab)} style={{
@@ -204,6 +204,7 @@ export default function LogisticsPanel({ onClose }) {
               color: activeTab === tab ? COLORS.white : COLORS.grey,
               padding: "10px 18px", fontSize: 12, fontWeight: 600,
               cursor: "pointer", textTransform: "uppercase", letterSpacing: 1,
+              whiteSpace: "nowrap",
               transition: "all 0.2s",
             }}>{tab}</button>
           ))}
@@ -216,28 +217,28 @@ export default function LogisticsPanel({ onClose }) {
           {activeTab === "dashboard" && (
             <div>
               {/* KPI CARDS */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 24 }}>
+              <div className="kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 24 }}>
                 {[
                   { label: "Total Shipments", value: shipments.length, color: COLORS.cyan },
                   { label: "Delivered", value: delivered, color: COLORS.green },
-                  { label: "In Transit", value: inTransit, color: COLORS.yellow },
+                  { label: "In Transit", value: inTransit, color: COLORS.orange },
                   { label: "Delayed", value: delayed, color: COLORS.red },
                   { label: "Stores Covered", value: NAIVAS_STORES.length, color: COLORS.orange },
-                  { label: "Invoice Value", value: `KES ${(totalValue / 1000).toFixed(0)}K`, color: COLORS.purple },
+                  { label: "Invoice Value", value: `KES ${(totalValue / 1000).toFixed(0)}K`, color: COLORS.cyan },
                 ].map(kpi => (
                   <div key={kpi.label} style={{
                     background: COLORS.card, border: `1px solid ${COLORS.border}`,
                     borderRadius: 12, padding: "16px",
                     borderTop: `3px solid ${kpi.color}`,
                   }}>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: kpi.color }}>{kpi.value}</div>
+                    <div style={{ fontSize: "clamp(18px, 2vw, 22px)", fontWeight: 800, color: kpi.color }}>{kpi.value}</div>
                     <div style={{ fontSize: 11, color: COLORS.grey, marginTop: 4 }}>{kpi.label}</div>
                   </div>
                 ))}
               </div>
 
               {/* LIVE SHIPMENTS + ALERTS */}
-              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16 }}>
+              <div className="dashboard-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16 }}>
                 {/* Shipment List */}
                 <div style={{
                   background: COLORS.card, border: `1px solid ${COLORS.border}`,
@@ -246,11 +247,12 @@ export default function LogisticsPanel({ onClose }) {
                   <div style={{
                     padding: "14px 18px", borderBottom: `1px solid ${COLORS.border}`,
                     display: "flex", justifyContent: "space-between", alignItems: "center",
+                    flexWrap: "wrap", gap: 8,
                   }}>
                     <span style={{ fontSize: 13, fontWeight: 700, color: COLORS.white }}>
                       Live Shipment Tracker
                     </span>
-                    <span style={{ fontSize: 11, color: COLORS.green }}>● Auto-refreshing every 3s</span>
+                    <span style={{ fontSize: 11, color: COLORS.green }}>● Auto-refreshing</span>
                   </div>
                   <div style={{ maxHeight: 420, overflowY: "auto" }}>
                     {shipments.map(s => (
@@ -322,12 +324,12 @@ export default function LogisticsPanel({ onClose }) {
                     {alerts.map(a => (
                       <div key={a.id} style={{
                         padding: "10px 12px", borderRadius: 8,
-                        background: a.type === "danger" ? `${COLORS.red}10` :
-                          a.type === "warning" ? `${COLORS.yellow}10` :
-                          a.type === "success" ? `${COLORS.green}10` : `${COLORS.cyan}10`,
-                        border: `1px solid ${a.type === "danger" ? COLORS.red :
-                          a.type === "warning" ? COLORS.yellow :
-                          a.type === "success" ? COLORS.green : COLORS.cyan}30`,
+                        background: COLORS.navy,
+                        borderLeft: `3px solid ${
+                          a.type === "danger" ? COLORS.red :
+                          a.type === "warning" ? COLORS.orange :
+                          a.type === "success" ? COLORS.green : COLORS.cyan
+                        }`,
                       }}>
                         <div style={{ fontSize: 11, color: COLORS.white, marginBottom: 4 }}>{a.msg}</div>
                         <div style={{ fontSize: 10, color: COLORS.grey }}>{a.time}</div>
@@ -356,14 +358,14 @@ export default function LogisticsPanel({ onClose }) {
                             height: "100%",
                             width: `${(parseFloat(s.temperature) / 8) * 100}%`,
                             background: parseFloat(s.temperature) > 6 ? COLORS.red :
-                              parseFloat(s.temperature) > 5 ? COLORS.yellow : COLORS.green,
+                              parseFloat(s.temperature) > 5 ? COLORS.orange : COLORS.green,
                             borderRadius: 2,
                           }} />
                         </div>
                         <span style={{
                           fontSize: 10, fontWeight: 700,
                           color: parseFloat(s.temperature) > 6 ? COLORS.red :
-                            parseFloat(s.temperature) > 5 ? COLORS.yellow : COLORS.green,
+                            parseFloat(s.temperature) > 5 ? COLORS.orange : COLORS.green,
                           fontFamily: "monospace", minWidth: 40, textAlign: "right",
                         }}>{s.temperature}°C</span>
                       </div>
@@ -377,88 +379,89 @@ export default function LogisticsPanel({ onClose }) {
           {/* SHIPMENTS TAB */}
           {activeTab === "shipments" && (
             <div>
-              <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center" }}>
+              <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center", flexWrap: "wrap" }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.white }}>All Shipments</div>
                 <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={inputStyle}>
                   <option>All</option>
                   {STATUSES.map(s => <option key={s}>{s}</option>)}
                 </select>
                 <div style={{ marginLeft: "auto", fontSize: 11, color: COLORS.grey }}>
-                  Showing {filtered.length} of {shipments.length} shipments
+                  Showing {filtered.length} of {shipments.length}
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: selectedShipment ? "1fr 380px" : "1fr", gap: 16 }}>
-                {/* Table */}
+              <div className="shipments-grid" style={{ display: "grid", gridTemplateColumns: selectedShipment ? "1fr 380px" : "1fr", gap: 16 }}>
                 <div style={{
                   background: COLORS.card, border: `1px solid ${COLORS.border}`,
                   borderRadius: 12, overflow: "hidden",
                 }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                    <thead>
-                      <tr style={{ background: COLORS.navy }}>
-                        {["Shipment ID", "Truck", "Driver", "Route", "Status", "Progress", "Temp", "ETA", "Value (KES)"].map(h => (
-                          <th key={h} style={{
-                            padding: "12px 14px", textAlign: "left",
-                            fontSize: 10, color: COLORS.grey, fontWeight: 600,
-                            letterSpacing: 1, textTransform: "uppercase",
-                            borderBottom: `1px solid ${COLORS.border}`,
-                          }}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filtered.map(s => (
-                        <tr key={s.id} onClick={() => setSelectedShipment(selectedShipment?.id === s.id ? null : s)}
-                          style={{
-                            borderBottom: `1px solid ${COLORS.border}`,
-                            cursor: "pointer",
-                            background: selectedShipment?.id === s.id ? `${COLORS.orange}15` : "transparent",
-                          }}
-                          onMouseEnter={e => { if (selectedShipment?.id !== s.id) e.currentTarget.style.background = COLORS.navy; }}
-                          onMouseLeave={e => { if (selectedShipment?.id !== s.id) e.currentTarget.style.background = "transparent"; }}
-                        >
-                          <td style={{ padding: "11px 14px", fontSize: 11, color: COLORS.cyan, fontFamily: "monospace", fontWeight: 700 }}>{s.id}</td>
-                          <td style={{ padding: "11px 14px", fontSize: 11, color: COLORS.white, fontFamily: "monospace" }}>{s.truck}</td>
-                          <td style={{ padding: "11px 14px", fontSize: 11, color: COLORS.white }}>{s.driver}</td>
-                          <td style={{ padding: "11px 14px", fontSize: 10, color: COLORS.grey }}>
-                            {s.stores.map(st => st?.area).join(" → ")}
-                          </td>
-                          <td style={{ padding: "11px 14px" }}>
-                            <span style={{
-                              fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 4,
-                              background: `${STATUS_COLORS[s.status]}20`,
-                              color: STATUS_COLORS[s.status],
-                              border: `1px solid ${STATUS_COLORS[s.status]}40`,
-                            }}>{s.status}</span>
-                          </td>
-                          <td style={{ padding: "11px 14px", minWidth: 80 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                              <div style={{ flex: 1, height: 4, background: COLORS.border, borderRadius: 2 }}>
-                                <div style={{
-                                  height: "100%", width: `${s.progress}%`,
-                                  background: STATUS_COLORS[s.status], borderRadius: 2,
-                                }} />
-                              </div>
-                              <span style={{ fontSize: 10, color: COLORS.grey, minWidth: 28 }}>{s.progress}%</span>
-                            </div>
-                          </td>
-                          <td style={{
-                            padding: "11px 14px", fontSize: 11, fontFamily: "monospace", fontWeight: 700,
-                            color: parseFloat(s.temperature) > 6 ? COLORS.red :
-                              parseFloat(s.temperature) > 5 ? COLORS.yellow : COLORS.green,
-                          }}>{s.temperature}°C</td>
-                          <td style={{ padding: "11px 14px", fontSize: 11, color: COLORS.orange }}>{s.eta}</td>
-                          <td style={{ padding: "11px 14px", fontSize: 11, color: COLORS.white, fontFamily: "monospace" }}>
-                            {s.invoiceValue.toLocaleString()}
-                          </td>
+                  <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 700 }}>
+                      <thead>
+                        <tr style={{ background: COLORS.navy }}>
+                          {["Shipment ID", "Truck", "Driver", "Route", "Status", "Progress", "Temp", "ETA", "Value (KES)"].map(h => (
+                            <th key={h} style={{
+                              padding: "12px 14px", textAlign: "left",
+                              fontSize: 10, color: COLORS.grey, fontWeight: 600,
+                              letterSpacing: 1, textTransform: "uppercase",
+                              borderBottom: `1px solid ${COLORS.border}`,
+                              whiteSpace: "nowrap",
+                            }}>{h}</th>
+                          ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {filtered.map(s => (
+                          <tr key={s.id} onClick={() => setSelectedShipment(selectedShipment?.id === s.id ? null : s)}
+                            style={{
+                              borderBottom: `1px solid ${COLORS.border}`,
+                              cursor: "pointer",
+                              background: selectedShipment?.id === s.id ? `${COLORS.orange}15` : "transparent",
+                            }}
+                            onMouseEnter={e => { if (selectedShipment?.id !== s.id) e.currentTarget.style.background = COLORS.navy; }}
+                            onMouseLeave={e => { if (selectedShipment?.id !== s.id) e.currentTarget.style.background = "transparent"; }}
+                          >
+                            <td style={{ padding: "11px 14px", fontSize: 11, color: COLORS.cyan, fontFamily: "monospace", fontWeight: 700 }}>{s.id}</td>
+                            <td style={{ padding: "11px 14px", fontSize: 11, color: COLORS.white, fontFamily: "monospace" }}>{s.truck}</td>
+                            <td style={{ padding: "11px 14px", fontSize: 11, color: COLORS.white }}>{s.driver}</td>
+                            <td style={{ padding: "11px 14px", fontSize: 10, color: COLORS.grey }}>
+                              {s.stores.map(st => st?.area).join(" → ")}
+                            </td>
+                            <td style={{ padding: "11px 14px" }}>
+                              <span style={{
+                                fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 4,
+                                background: `${STATUS_COLORS[s.status]}20`,
+                                color: STATUS_COLORS[s.status],
+                                border: `1px solid ${STATUS_COLORS[s.status]}40`,
+                              }}>{s.status}</span>
+                            </td>
+                            <td style={{ padding: "11px 14px", minWidth: 80 }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                <div style={{ flex: 1, height: 4, background: COLORS.border, borderRadius: 2 }}>
+                                  <div style={{
+                                    height: "100%", width: `${s.progress}%`,
+                                    background: STATUS_COLORS[s.status], borderRadius: 2,
+                                  }} />
+                                </div>
+                                <span style={{ fontSize: 10, color: COLORS.grey, minWidth: 28 }}>{s.progress}%</span>
+                              </div>
+                            </td>
+                            <td style={{
+                              padding: "11px 14px", fontSize: 11, fontFamily: "monospace", fontWeight: 700,
+                              color: parseFloat(s.temperature) > 6 ? COLORS.red :
+                                parseFloat(s.temperature) > 5 ? COLORS.orange : COLORS.green,
+                            }}>{s.temperature}°C</td>
+                            <td style={{ padding: "11px 14px", fontSize: 11, color: COLORS.orange }}>{s.eta}</td>
+                            <td style={{ padding: "11px 14px", fontSize: 11, color: COLORS.white, fontFamily: "monospace" }}>
+                              {s.invoiceValue.toLocaleString()}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
-                {/* Shipment Detail */}
                 {selectedShipment && (
                   <div style={{
                     background: COLORS.card, border: `1px solid ${COLORS.orange}40`,
@@ -566,7 +569,7 @@ export default function LogisticsPanel({ onClose }) {
               <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.white, marginBottom: 16 }}>
                 Fleet Management — {TRUCKS.length} Trucks
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+              <div className="fleet-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
                 {TRUCKS.map((truck, i) => {
                   const shipment = shipments[i];
                   return (
@@ -585,7 +588,12 @@ export default function LogisticsPanel({ onClose }) {
                           color: STATUS_COLORS[shipment?.status],
                         }}>{shipment?.status}</span>
                       </div>
-                      <div style={{ fontSize: 28, textAlign: "center", margin: "12px 0" }}>🚛</div>
+                      <div style={{
+                        fontSize: 10, fontWeight: 700, color: COLORS.grey,
+                        textAlign: "center", margin: "12px 0", letterSpacing: 2,
+                        background: COLORS.navy, padding: "8px", borderRadius: 4,
+                        border: `1px solid ${COLORS.border}`,
+                      }}>TRUCK</div>
                       {[
                         { label: "Driver", value: truck.driver },
                         { label: "Phone", value: truck.phone },
@@ -629,7 +637,7 @@ export default function LogisticsPanel({ onClose }) {
               <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.white, marginBottom: 16 }}>
                 Nairobi Route Map — {NAIVAS_STORES.length} Naivas Stores
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div className="routes-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <div style={{
                   background: COLORS.card, border: `1px solid ${COLORS.border}`,
                   borderRadius: 12, padding: 20,
@@ -684,7 +692,7 @@ export default function LogisticsPanel({ onClose }) {
                   <div style={{ fontSize: 12, fontWeight: 700, color: COLORS.orange, marginBottom: 12 }}>
                     ALL NAIVAS STORES — NAIROBI
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                  <div className="stores-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                     {NAIVAS_STORES.map(store => {
                       const truck = TRUCKS.find(t => t.route.includes(store.id));
                       const shipment = shipments[TRUCKS.indexOf(truck)];
@@ -722,7 +730,7 @@ export default function LogisticsPanel({ onClose }) {
               <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.white, marginBottom: 16 }}>
                 Operations Alerts & Notifications
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <div className="alerts-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <div style={{
                   background: COLORS.card, border: `1px solid ${COLORS.border}`,
                   borderRadius: 12, padding: 16,
@@ -730,12 +738,12 @@ export default function LogisticsPanel({ onClose }) {
                   {alerts.map(a => (
                     <div key={a.id} style={{
                       padding: "12px", borderRadius: 8, marginBottom: 8,
-                      background: a.type === "danger" ? `${COLORS.red}10` :
-                        a.type === "warning" ? `${COLORS.yellow}10` :
-                        a.type === "success" ? `${COLORS.green}10` : `${COLORS.cyan}10`,
-                      border: `1px solid ${a.type === "danger" ? COLORS.red :
-                        a.type === "warning" ? COLORS.yellow :
-                        a.type === "success" ? COLORS.green : COLORS.cyan}30`,
+                      background: COLORS.navy,
+                      borderLeft: `3px solid ${
+                        a.type === "danger" ? COLORS.red :
+                        a.type === "warning" ? COLORS.orange :
+                        a.type === "success" ? COLORS.green : COLORS.cyan
+                      }`,
                       display: "flex", justifyContent: "space-between", alignItems: "flex-start",
                     }}>
                       <div>
@@ -751,7 +759,7 @@ export default function LogisticsPanel({ onClose }) {
                   ))}
                   {alerts.length === 0 && (
                     <div style={{ textAlign: "center", padding: 40, color: COLORS.grey, fontSize: 12 }}>
-                      ✅ No active alerts
+                      No active alerts
                     </div>
                   )}
                 </div>
@@ -772,14 +780,14 @@ export default function LogisticsPanel({ onClose }) {
                       <span style={{
                         fontSize: 11, fontWeight: 700, fontFamily: "monospace",
                         color: parseFloat(s.temperature) > 6 ? COLORS.red :
-                          parseFloat(s.temperature) > 5 ? COLORS.yellow : COLORS.green,
+                          parseFloat(s.temperature) > 5 ? COLORS.orange : COLORS.green,
                       }}>{s.temperature}°C</span>
                       <span style={{
                         fontSize: 9, padding: "2px 6px", borderRadius: 4,
                         background: parseFloat(s.temperature) > 6 ? `${COLORS.red}20` :
-                          parseFloat(s.temperature) > 5 ? `${COLORS.yellow}20` : `${COLORS.green}20`,
+                          parseFloat(s.temperature) > 5 ? `${COLORS.orange}20` : `${COLORS.green}20`,
                         color: parseFloat(s.temperature) > 6 ? COLORS.red :
-                          parseFloat(s.temperature) > 5 ? COLORS.yellow : COLORS.green,
+                          parseFloat(s.temperature) > 5 ? COLORS.orange : COLORS.green,
                       }}>{parseFloat(s.temperature) > 6 ? "BREACH" : parseFloat(s.temperature) > 5 ? "WARNING" : "OK"}</span>
                     </div>
                   ))}
@@ -794,7 +802,7 @@ export default function LogisticsPanel({ onClose }) {
               <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.white, marginBottom: 16 }}>
                 Operations Report — Bio Foods Nairobi Distribution
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
+              <div className="reports-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
                 {[
                   { label: "Total Delivery Value", value: `KES ${totalValue.toLocaleString()}`, sub: "Today's dispatch" },
                   { label: "Avg Delivery Progress", value: `${Math.round(shipments.reduce((a, b) => a + b.progress, 0) / shipments.length)}%`, sub: "Across all trucks" },
@@ -807,7 +815,7 @@ export default function LogisticsPanel({ onClose }) {
                     background: COLORS.card, border: `1px solid ${COLORS.border}`,
                     borderRadius: 12, padding: 20,
                   }}>
-                    <div style={{ fontSize: 24, fontWeight: 800, color: COLORS.orange, marginBottom: 4 }}>
+                    <div style={{ fontSize: "clamp(20px, 2.5vw, 24px)", fontWeight: 800, color: COLORS.orange, marginBottom: 4 }}>
                       {r.value}
                     </div>
                     <div style={{ fontSize: 13, color: COLORS.white, marginBottom: 4 }}>{r.label}</div>
@@ -825,60 +833,62 @@ export default function LogisticsPanel({ onClose }) {
                     Per-Route Performance Report
                   </span>
                 </div>
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ background: COLORS.navy }}>
-                      {["Truck", "Driver", "Stores", "Distance", "Load (kg)", "Temp", "Status", "Invoice (KES)"].map(h => (
-                        <th key={h} style={{
-                          padding: "10px 14px", textAlign: "left",
-                          fontSize: 10, color: COLORS.grey, fontWeight: 600,
-                          letterSpacing: 1, textTransform: "uppercase",
-                        }}>{h}</th>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 700 }}>
+                    <thead>
+                      <tr style={{ background: COLORS.navy }}>
+                        {["Truck", "Driver", "Stores", "Distance", "Load (kg)", "Temp", "Status", "Invoice (KES)"].map(h => (
+                          <th key={h} style={{
+                            padding: "10px 14px", textAlign: "left",
+                            fontSize: 10, color: COLORS.grey, fontWeight: 600,
+                            letterSpacing: 1, textTransform: "uppercase",
+                          }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {shipments.map((s, i) => (
+                        <tr key={s.id} style={{ borderBottom: `1px solid ${COLORS.border}` }}>
+                          <td style={{ padding: "10px 14px", fontSize: 11, color: COLORS.cyan, fontFamily: "monospace" }}>{s.truck}</td>
+                          <td style={{ padding: "10px 14px", fontSize: 11, color: COLORS.white }}>{s.driver}</td>
+                          <td style={{ padding: "10px 14px", fontSize: 10, color: COLORS.grey }}>
+                            {s.stores.map(st => st?.name.replace("Naivas ", "")).join(", ")}
+                          </td>
+                          <td style={{ padding: "10px 14px", fontSize: 11, color: COLORS.white }}>
+                            {TRUCKS[i].route.reduce((a, id) => {
+                              const st = NAIVAS_STORES.find(s => s.id === id);
+                              return a + (st?.distance || 0);
+                            }, 0).toFixed(1)} km
+                          </td>
+                          <td style={{ padding: "10px 14px", fontSize: 11, color: COLORS.white }}>{s.totalKg}</td>
+                          <td style={{
+                            padding: "10px 14px", fontSize: 11, fontFamily: "monospace", fontWeight: 700,
+                            color: parseFloat(s.temperature) > 6 ? COLORS.red :
+                              parseFloat(s.temperature) > 5 ? COLORS.orange : COLORS.green,
+                          }}>{s.temperature}°C</td>
+                          <td style={{ padding: "10px 14px" }}>
+                            <span style={{
+                              fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 4,
+                              background: `${STATUS_COLORS[s.status]}20`,
+                              color: STATUS_COLORS[s.status],
+                            }}>{s.status}</span>
+                          </td>
+                          <td style={{ padding: "10px 14px", fontSize: 11, color: COLORS.white, fontFamily: "monospace" }}>
+                            {s.invoiceValue.toLocaleString()}
+                          </td>
+                        </tr>
                       ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {shipments.map((s, i) => (
-                      <tr key={s.id} style={{ borderBottom: `1px solid ${COLORS.border}` }}>
-                        <td style={{ padding: "10px 14px", fontSize: 11, color: COLORS.cyan, fontFamily: "monospace" }}>{s.truck}</td>
-                        <td style={{ padding: "10px 14px", fontSize: 11, color: COLORS.white }}>{s.driver}</td>
-                        <td style={{ padding: "10px 14px", fontSize: 10, color: COLORS.grey }}>
-                          {s.stores.map(st => st?.name.replace("Naivas ", "")).join(", ")}
+                      <tr style={{ background: COLORS.navy }}>
+                        <td colSpan={7} style={{ padding: "10px 14px", fontSize: 11, fontWeight: 700, color: COLORS.white }}>
+                          TOTAL
                         </td>
-                        <td style={{ padding: "10px 14px", fontSize: 11, color: COLORS.white }}>
-                          {TRUCKS[i].route.reduce((a, id) => {
-                            const st = NAIVAS_STORES.find(s => s.id === id);
-                            return a + (st?.distance || 0);
-                          }, 0).toFixed(1)} km
-                        </td>
-                        <td style={{ padding: "10px 14px", fontSize: 11, color: COLORS.white }}>{s.totalKg}</td>
-                        <td style={{
-                          padding: "10px 14px", fontSize: 11, fontFamily: "monospace", fontWeight: 700,
-                          color: parseFloat(s.temperature) > 6 ? COLORS.red :
-                            parseFloat(s.temperature) > 5 ? COLORS.yellow : COLORS.green,
-                        }}>{s.temperature}°C</td>
-                        <td style={{ padding: "10px 14px" }}>
-                          <span style={{
-                            fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 4,
-                            background: `${STATUS_COLORS[s.status]}20`,
-                            color: STATUS_COLORS[s.status],
-                          }}>{s.status}</span>
-                        </td>
-                        <td style={{ padding: "10px 14px", fontSize: 11, color: COLORS.white, fontFamily: "monospace" }}>
-                          {s.invoiceValue.toLocaleString()}
+                        <td style={{ padding: "10px 14px", fontSize: 11, fontWeight: 800, color: COLORS.orange, fontFamily: "monospace" }}>
+                          {totalValue.toLocaleString()}
                         </td>
                       </tr>
-                    ))}
-                    <tr style={{ background: COLORS.navy }}>
-                      <td colSpan={7} style={{ padding: "10px 14px", fontSize: 11, fontWeight: 700, color: COLORS.white }}>
-                        TOTAL
-                      </td>
-                      <td style={{ padding: "10px 14px", fontSize: 11, fontWeight: 800, color: COLORS.orange, fontFamily: "monospace" }}>
-                        {totalValue.toLocaleString()}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
@@ -889,6 +899,27 @@ export default function LogisticsPanel({ onClose }) {
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #12121A; }
         ::-webkit-scrollbar-thumb { background: #2A2A3A; border-radius: 3px; }
+
+        /* --- RESPONSIVE BREAKPOINTS --- */
+        @media (max-width: 1024px) {
+          .logistics-panel .kpi-grid { grid-template-columns: repeat(3, 1fr) !important; }
+          .logistics-panel .fleet-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 768px) {
+          .logistics-panel .dashboard-grid { grid-template-columns: 1fr !important; }
+          .logistics-panel .routes-grid { grid-template-columns: 1fr !important; }
+          .logistics-panel .alerts-grid { grid-template-columns: 1fr !important; }
+          .logistics-panel .reports-grid { grid-template-columns: 1fr 1fr !important; }
+          .logistics-panel .fleet-grid { grid-template-columns: 1fr 1fr !important; }
+          .logistics-panel .shipments-grid { grid-template-columns: 1fr !important; }
+          .logistics-panel .stores-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+        @media (max-width: 480px) {
+          .logistics-panel .kpi-grid { grid-template-columns: 1fr 1fr !important; }
+          .logistics-panel .fleet-grid { grid-template-columns: 1fr !important; }
+          .logistics-panel .reports-grid { grid-template-columns: 1fr !important; }
+          .logistics-panel .stores-grid { grid-template-columns: 1fr !important; }
+        }
       `}</style>
     </div>
   );
