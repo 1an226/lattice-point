@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import LogisticsPanel from "./LogisticsPanel";
 
 // eslint-disable-next-line
 const COLORS = {
@@ -141,7 +142,7 @@ function AfricaMap() {
   );
 }
 
-function NavBar() {
+function NavBar({ onOpenLogistics }) {
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -174,7 +175,7 @@ function NavBar() {
           LATTICE POINT
         </span>
       </div>
-      <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
+      <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
         {links.map(l => (
           <a key={l} href={`#${l.toLowerCase()}`} style={{
             color: "#8A8A9A", textDecoration: "none",
@@ -182,6 +183,18 @@ function NavBar() {
             letterSpacing: 1, textTransform: "uppercase",
           }}>{l}</a>
         ))}
+        <button onClick={onOpenLogistics} style={{
+          background: "transparent",
+          border: "1px solid #FF6B00",
+          color: "#FF6B00",
+          padding: "8px 16px", borderRadius: 6,
+          fontFamily: "Inter, sans-serif", fontSize: 12, fontWeight: 600,
+          cursor: "pointer", letterSpacing: 0.5, textTransform: "uppercase",
+          transition: "all 0.2s",
+        }}
+          onMouseEnter={e => { e.target.style.background = "#FF6B00"; e.target.style.color = "#FFFFFF"; }}
+          onMouseLeave={e => { e.target.style.background = "transparent"; e.target.style.color = "#FF6B00"; }}
+        >Logistics Portal</button>
         <a href="#contact" style={{
           background: "#FF6B00", color: "#FFFFFF",
           padding: "8px 20px", borderRadius: 6,
@@ -553,6 +566,8 @@ function Footer() {
 }
 
 export default function App() {
+  const [showLogistics, setShowLogistics] = useState(false);
+
   useEffect(() => {
     const link = document.createElement("link");
     link.href = "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap";
@@ -566,7 +581,7 @@ export default function App() {
 
   return (
     <div style={{ background: "#0A0A0F", minHeight: "100vh" }}>
-      <NavBar />
+      <NavBar onOpenLogistics={() => setShowLogistics(true)} />
       <Hero />
       <Stats />
       <Services />
@@ -575,6 +590,7 @@ export default function App() {
       <Clients />
       <Contact />
       <Footer />
+      {showLogistics && <LogisticsPanel onClose={() => setShowLogistics(false)} />}
     </div>
   );
 }
