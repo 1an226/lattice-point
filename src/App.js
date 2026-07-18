@@ -1,5 +1,28 @@
 import { useState, useEffect } from "react";
 import LogisticsPanel from "./LogisticsPanel";
+// Dynamically import all activation images from assets
+const imageContext = require.context('./assets', false, /\.jpg$/);
+const imageList = imageContext.keys()
+  .map((key) => ({
+    src: imageContext(key),
+    filename: key.replace('./', ''),
+  }))
+  .sort((a, b) => {
+    const numA = parseInt(a.filename.match(/\d+/)[0]);
+    const numB = parseInt(b.filename.match(/\d+/)[0]);
+    return numA - numB;
+  });
+// Put the captioned images first
+const captionedFilenames = ["activation25.jpg", "activation39.jpg", "activation40.jpg"];
+const captionedImages = imageList.filter(img => captionedFilenames.includes(img.filename));
+const otherImages = imageList.filter(img => !captionedFilenames.includes(img.filename));
+const finalImageList = [...captionedImages, ...otherImages];
+// Captions for specific images
+const imageCaptions = {
+  "activation25.jpg": "Exec spot on, Activation at Halal Sarit Centre",
+  "activation39.jpg": "Set up at Sarit Centre for Halal Activations",
+  "activation40.jpg": "BAs Look and Feel at Halal Sarit Centre",
+};
 
 // eslint-disable-next-line
 const COLORS = {
@@ -293,6 +316,8 @@ function NavBar({ onOpenLogistics }) {
 function Hero() {
   const [typed, setTyped] = useState("");
   const [done, setDone] = useState(false);
+  const [showImages, setShowImages] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   const full = "Win at the point of purchase.";
 
   useEffect(() => {
@@ -372,12 +397,100 @@ function Hero() {
               textDecoration: "none", letterSpacing: 0.5, display: "inline-block",
             }}>Our Services</a>
           </div>
+          {/* Activation Images Toggle */}
+          <div style={{ marginTop: 24 }}>
+            <button
+              onClick={() => setShowImages(!showImages)}
+              style={{
+                background: "transparent",
+                border: "1px solid #FF6B00",
+                color: "#FF6B00",
+                padding: "12px 24px",
+                borderRadius: 8,
+                fontFamily: "Inter, sans-serif",
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              {showImages ? 'Hide Images' : 'View Activation Images'}
+            </button>
+
+            {showImages && (
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: 16,
+                marginTop: 20,
+              }}>
+                {finalImageList.map((img, idx) => (
+                  <div key={idx} style={{ textAlign: "center" }}>
+                    <img
+                      src={img.src}
+                      alt={`Activation ${idx + 1}`}
+                      onClick={() => setSelectedImage(img.src)}
+                      style={{
+                        width: "100%",
+                        height: 250,
+                        objectFit: "cover",
+                        borderRadius: 8,
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                        cursor: "pointer",
+                      }}
+                    />
+                    {imageCaptions[img.filename] && (
+                      <p style={{
+                        fontFamily: "Inter, sans-serif",
+                        fontSize: 12,
+                        color: "#CCCCCC",
+                        marginTop: 6,
+                      }}>
+                        {imageCaptions[img.filename]}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         <div style={{ flex: "1 1 300px", maxWidth: 420 }}>
           <AfricaMap />
         </div>
       </div>
       <style>{`@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }`}</style>
+      {/* Lightbox overlay */}
+      {selectedImage && (
+        <div
+          onClick={() => setSelectedImage(null)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.85)",
+            backdropFilter: "blur(10px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+            cursor: "pointer",
+          }}
+        >
+          <img
+            src={selectedImage}
+            alt="Expanded view"
+            style={{
+              maxWidth: "90vw",
+              maxHeight: "90vh",
+              objectFit: "contain",
+              borderRadius: 12,
+              boxShadow: "0 20px 60px rgba(0,0,0,0.6)",
+            }}
+          />
+        </div>
+      )}
     </section>
   );
 }
