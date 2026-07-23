@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";   // <-- added for M‑Pesa
+import truck01 from './assets/truck-01.jpg';
+import truck02 from './assets/truck-02.jpg';
+import truck03 from './assets/truck-03.jpg';
+import truck04 from './assets/truck-04.jpg';
+import banner1 from './assets/banner1.jpg';
+import trailer01 from './assets/trailer01.jpg';
 
 const COLORS = {
   bg: "#0A0A0F",
@@ -70,6 +76,17 @@ const PRODUCTS = [
   { name: "Bio Whipping Cream 500ml", sku: "BIO-CRM-001", temp: "2-6°C", units: 60 },
   { name: "Bio Mozzarella 250g", sku: "BIO-CHS-001", temp: "2-6°C", units: 40 },
 ];
+// Truck images mapping
+const TRUCK_IMAGES = {
+  "TRK-001": truck01,
+  "TRK-002": truck02,
+  "TRK-003": truck03,
+  "TRK-004": truck04,
+  "TRK-005": truck01,
+  "TRK-006": truck02,
+  "TRK-007": truck03,
+  "TRK-008": truck04,
+};
 
 function generateShipments() {
   return TRUCKS.map((truck, i) => {
@@ -108,6 +125,7 @@ export default function LogisticsPanel({ onClose }) {
   const [filterStatus, setFilterStatus] = useState("All");
   const intervalRef = useRef(null);
 
+  const [lightboxImage, setLightboxImage] = useState(null);
   // --- M-Pesa payment states ---
   const [paymentPhone, setPaymentPhone] = useState('');
   const [paymentAmount, setPaymentAmount] = useState('');
@@ -248,6 +266,17 @@ export default function LogisticsPanel({ onClose }) {
           {/* DASHBOARD TAB */}
           {activeTab === "dashboard" && (
             <div>
+              {/* Banner and Trailer Images */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+                <img src={banner1} alt="Advertising Banner" onClick={() => setLightboxImage(banner1)} style={{
+                  width: "100%", height: 200, objectFit: "cover",
+                  borderRadius: 8, border: `1px solid ${COLORS.border}`,
+                }} />
+                <img src={trailer01} alt="Trailer" onClick={() => setLightboxImage(trailer01)} style={{
+                  width: "100%", height: 200, objectFit: "cover",
+                  borderRadius: 8, border: `1px solid ${COLORS.border}`,
+                }} />
+              </div>
               {/* KPI CARDS */}
               <div className="kpi-grid" style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12, marginBottom: 24 }}>
                 {[
@@ -700,13 +729,18 @@ export default function LogisticsPanel({ onClose }) {
                           color: STATUS_COLORS[shipment?.status],
                         }}>{shipment?.status}</span>
                       </div>
-                      <div style={{
-                        fontSize: 10, fontWeight: 700, color: COLORS.grey,
-                        textAlign: "center", margin: "12px 0", letterSpacing: 2,
-                        background: COLORS.navy, padding: "8px", borderRadius: 4,
-                        border: `1px solid ${COLORS.border}`,
-                      }}>TRUCK</div>
-                      {[
+                      <img
+                        src={TRUCK_IMAGES[truck.id]}
+                        alt={truck.id}
+                        style={{
+                          width: "100%",
+                          height: 180,
+                          objectFit: "cover",
+                          borderRadius: 8,
+                          marginBottom: 12,
+                        }}
+                      />
+                      {[ 
                         { label: "Driver", value: truck.driver },
                         { label: "Phone", value: truck.phone },
                         { label: "Capacity", value: `${truck.capacity} kg` },
@@ -1006,6 +1040,38 @@ export default function LogisticsPanel({ onClose }) {
           )}
         </div>
       </div>
+      {/* Lightbox overlay */}
+      {lightboxImage && (
+        <div
+          onClick={() => setLightboxImage(null)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.85)",
+            backdropFilter: "blur(10px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 10000,
+            cursor: "pointer",
+          }}
+        >
+          <img
+            src={lightboxImage}
+            alt="Expanded view"
+            style={{
+              maxWidth: "90vw",
+              maxHeight: "90vh",
+              objectFit: "contain",
+              borderRadius: 12,
+              boxShadow: "0 20px 60px rgba(0,0,0,0.6)",
+            }}
+          />
+        </div>
+      )}
       <style>{`
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
